@@ -1,3 +1,13 @@
+/**
+ * @file main.cpp
+ * @author Ahad Rauf (ahadrauf@stanford.edu)
+ * @brief A simple program to find the distances and angles between points on a Windows screen. No bloatware, and easy to use.
+ * @version 1.0
+ * @date 2022-07-18
+ * 
+ * @copyright Copyright (c) 2022 Ahad Rauf. Licensed under MIT License.
+ * 
+ */
 #ifndef UNICODE
 #define UNICODE
 #endif
@@ -89,8 +99,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
     ShowWindow(hwnd, nCmdShow);
     UpdateWindow(hwnd);
 
-    // DeleteObject(GGG);
-
     // Run the message loop.
     MSG msg = { };
     while (GetMessage(&msg, NULL, 0, 0) > 0)
@@ -98,7 +106,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR pCmdLine,
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
-    // UnhookWindowsHookEx(hook);
     return 0;
 }
 
@@ -184,16 +191,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             swprintf_s(text, 60, L"Current Pt: %d      ", pState->currPoint);
             TextOut(hdc, 10, 85, text, wcslen(text));
 
-            // Gdiplus::Graphics graphics(hdc);
-            // if (pState->clicked_x1 != 0 || pState->clicked_y1 != 0) {
-            //     Gdiplus::Pen pen(Gdiplus::Color(255, 0, 0, 255), 5);
-            //     graphics.DrawLine(&pen, 10, 20, 10, 20);
-            // }
-            // if (pState->clicked_x2 != 0 || pState->clicked_y2 != 0) {
-            //     Gdiplus::Pen pen(Gdiplus::Color(0, 0, 255, 255), 5);
-            //     graphics.DrawLine(&pen, 30, 40, 30, 40);
-            // }
-
             EndPaint(hwnd, &ps);
         }
         return 0;
@@ -257,44 +254,3 @@ void updateMousePosition(HWND hwnd, RulerInfo *pState, bool updateClickedPoints)
 
     ReleaseDC(hwnd, hdc);
 }
-
-LRESULT CALLBACK MouseProc(int nCode, WPARAM wParam, LPARAM lParam) {
-    std::cout << wParam << lParam << std::endl;
-    switch (wParam) {
-        case WM_MOUSEMOVE:
-            pState->pos_x = GET_X_LPARAM(lParam);
-            pState->pos_y = GET_Y_LPARAM(lParam);
-            return 0;
-            // break;
-        case WM_LBUTTONDOWN:
-            pState->pos_x = GET_X_LPARAM(lParam);
-            pState->pos_y = GET_Y_LPARAM(lParam);
-            if (pState->currPoint == 0) {
-                pState->clicked_x1 = pState->pos_x;
-                pState->clicked_y1 = pState->pos_y;
-                pState->currPoint = 1;
-            } else {
-                pState->clicked_x2 = pState->pos_x;
-                pState->clicked_y2 = pState->pos_y;
-                pState->currPoint = 0;
-            }
-            HWND hwnd = FindWindowA("Main Window Class", "Screen Ruler");
-            UpdateWindow(hwnd);
-            return 0;
-            // break;
-    }
-    return CallNextHookEx(NULL, nCode, wParam, lParam);
-}
-
-
-// int main()
-// {
-//     // std::cout << "Hello World" << std::endl;
-//     // POINT p;
-//     // for (int i = 0; i < 100; i++) {
-//     //     if (GetCursorPos(&p)) {
-//     //         std::cout << p.x << " " << p.y << std::endl;
-//     //     }
-//     // }
-//     MessageBox(0, L"Press OK", L"Hi", MB_SETFOREGROUND);
-// }
